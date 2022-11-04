@@ -115,7 +115,8 @@
 
         //controller IKKE I BRUK
         function alreadyContainsItem(pokemon){
-            for(item of usedPokemons){
+            for(item of myInventory){
+                if (myInventory.length >= 8) return false;
                 if(item == pokemon){
                     console.log("already contains" + pokemon);
                     return true;
@@ -124,17 +125,24 @@
             return false;
         }
 
-       //function 
+       
 
 
         
 
         //controller
         function meetPokemon(){
-             
-                
-            meetPokemonItem = getRandomPokemon();
-            //usedPokemons.push(meetPokemonItem);
+            
+            if(myInventory.length >= 8){//brudd på mvc
+                updateOutputDiv("You have caught all the pokemons");
+                return;
+            }
+            do{    
+                meetPokemonItem = getRandomPokemon();
+            } while (alreadyContainsItem(meetPokemonItem));    
+            
+
+
             console.log(meetPokemonItem);
             
                 
