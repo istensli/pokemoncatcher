@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemoncatcher</title>
+
+    <style>
+
+        .inventoryPic{
+            width: 50px;
+            height: 50px;
+        }
+        #page{
+            display: flex;
+            flex-direction: column;
+        }
+        #box{
+            display: flex;
+            flex-direction: row;
+
+        }
+        #inputDiv{
+            width: 200px;
+            height: 200px;
+            display: flex;
+            border: 1px solid black;
+
+        }
+        #meetPokemonDiv{
+            width: 200px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            
+            border: 1px solid black;
+
+        }
+
+        .meetPic{
+            height: 175px;/*154px*/
+            width: 200px;
+        }
+
+        #meetPokemonBtns{
+            display: flex;
+            flex-direction: row;
+            /*width: 200px;*/
+            /*height: 20px;*/
+
+        }
+        .meetBtns{
+            width: 200px;
+            height: 20px;
+
+        }
+
+        #inventoryDiv{
+            min-width: 200px;
+            min-height: 200px;
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 600px;
+            border: 1px solid black;
+
+        }
+        #outputDiv{
+            font-size: xx-large;
+
+        }
+        button{
+            width: auto;
+            height: auto;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="page">
+        <div id="box">
+            <div id="inputDiv">
+                <button id="showHideInventoryBtn" onclick="showHideInventory()">Show/hide my pokemons</button>
+                <button id="meetNewPokemonBtn" onclick="meetPokemon()">Meet pokemon</button>
+            </div>
+            <div id="meetPokemonDiv">
+                <div id="meetPokemonPic"></div>
+                <div id="meetPokemonBtns"></div>
+
+               
+            </div>    
+            
+            <div id="inventoryDiv"></div>
+            
+        </div>
+        <div id="outputDiv"></div>
+
+    </div>
+    
+
+    <script>
+        //model
+        let pokemons = ['Ninetales','Squirtle', 'Dragonite', 'Eevee', 'Bulbasaur', 'Arcanine', 'Gengar', 'Charizard'];
+        let myInventory = [];
+
+        let meetPokemonItem = "";
+
+        let showInventoryBool = false;
+
+        
+
+        document.getElementById('inventoryDiv').style.display = 'none';
+
+
+        
+
+        //controller
+        function meetPokemon(){
+            meetPokemonItem = getRandomPokemon();
+            console.log(meetPokemonItem);
+
+
+            showMeetPokemon(false);
+
+        }
+         //controller
+        function escapeFromPokemon(){
+            if (meetPokemonItem == "") return;
+            
+
+            
+            clearMeetPokemon();
+            updateOutputDiv("You escaped from the pokemon!");
+            showMeetPokemon(true);
+
+        }
+         //controller
+        function catchPokemon(){
+            if (meetPokemonItem == "") return;
+
+                                            //strengt tatt brudd med MVC her..
+            if(randomNumber(0,1) == 0){
+                updateOutputDiv("You failed to catch the pokemon!");
+                clearMeetPokemon();
+            }    
+            else {
+                myInventory.push(meetPokemonItem);
+                updateOutputDiv("You caught the "+ meetPokemonItem +"!");
+                clearMeetPokemon();
+
+            }
+
+            
+
+            makeInventory();
+            
+        }
+
+        //controller
+        function clearMeetPokemon(){
+            meetPokemonItem = "";
+
+
+            //kaller view
+            showMeetPokemon(true);
+
+        }
+
+
+
+
+        //controller
+        function getRandomPokemon(){
+            pokemon = pokemons[randomNumber(0, pokemons.length - 1)];
+            
+            return pokemon;
+        }
+
+        //controller
+        function randomNumber(min, max){
+            number = min + Math.floor(Math.random() * (max - min + 1));
+            
+            return number;
+           
+        }
+
+        //controller
+        function showHideInventory(){
+            if (!showInventoryBool){
+                showInventoryBool = true;
+                showInventory();
+            }
+            else{
+                showInventoryBool = false;
+                hideInventory();
+                
+            }
+
+
+        }
+
+
+        //view
+        let meetPokemonDiv = document.getElementById('meetPokemonDiv');
+        let meetPokemonPic = document.getElementById('meetPokemonPic');
+        let meetPokemonButtons = document.getElementById('meetPokemonBtns');
+
+        
+
+        //view
+        function makeInventory(){
+            let html = "";
+            for(pokemon of myInventory){
+                html += /*HTML*/`<img class="inventoryPic" src="/img/${pokemon}.png" alt="${meetPokemonItem}">`;
+            }
+            document.getElementById('inventoryDiv').innerHTML = html;
+            
+
+
+        }
+        //view
+        function showInventory(){
+            document.getElementById('inventoryDiv').style.display = 'flex';
+
+
+        }
+        //view
+        function hideInventory(){
+            document.getElementById('inventoryDiv').style.display = 'none';
+
+        }
+        //view
+        function showMeetPokemon(isEmpty){
+            if (isEmpty){
+                meetPokemonPic.innerHTML = "";
+                meetPokemonButtons.innerHTML = "";  
+                return;
+            }
+            meetPokemonPic.innerHTML = "";
+            meetPokemonButtons.innerHTML = "";    
+            let html = /*HTML*/`<img class="meetPic" src="/img/${meetPokemonItem}.png" alt="${meetPokemonItem}">`;
+
+            
+            meetPokemonPic.innerHTML = html;
+            
+            meetPokemonButtons.innerHTML += /*HTML*/`<button class="meetBtns" onclick="escapeFromPokemon()">Escape</button>`;
+            meetPokemonButtons.innerHTML += /*HTML*/`<button class="meetBtns" onclick="catchPokemon()">Catch</button>`;
+            
+
+        }
+
+        function updateOutputDiv(output){
+            outputDiv = document.getElementById('outputDiv');
+            outputDiv.innerHTML = output;
+
+
+        }
+        
+        
+        
+    </script>
+    
+</body>
+</html>
